@@ -1,0 +1,8 @@
+{
+    "python.condaPath": "E:/OPEN/anaconda3/condabin/conda",
+    "python.venvPath": "E:/OPEN/anaconda3/envs/",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true,
+    "python.formatting.provider": "autopep8",
+    "cmake.configureOnOpen": false
+}
