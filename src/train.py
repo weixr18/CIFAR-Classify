@@ -52,7 +52,8 @@ class Trainer():
         if SHOW_NET:
             from torchsummary import summary
             batch_size = self.hyper_params["batch_size"]
-            summary(self.resnet, (3, 32, 32), batch_size)
+            input_size = self.hyper_params["input_size"][0]
+            summary(self.resnet, (3, input_size, input_size), batch_size)
 
         if(self.hyper_params["optimizer"] == "SGD"):
             self.optimizer = torch.optim.SGD(

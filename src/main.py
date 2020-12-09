@@ -20,7 +20,7 @@ if __name__ == "__main__":
     if mode == "Train":
         print("Preparing...")
         hyper_parameters = {
-            "input_size": (32, 32),
+            "input_size": (224, 224),
             "batch_size": 64,
             "threads": 0,
 
@@ -99,7 +99,7 @@ if __name__ == "__main__":
         hyper_parameters = {
             "batch_size": 64,
             "threads": 0,
-            "input_size": (32, 32),
+            "input_size": (224, 224),
         }
 
         use_cuda = True

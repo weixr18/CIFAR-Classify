@@ -10,7 +10,10 @@ data_transforms = transforms.Compose([
     # transforms.RandomVerticalFlip(),
     transforms.RandomHorizontalFlip(),
     # transforms.RandomRotation(90),
-    transforms.ToTensor(),
+])
+
+data_resize = transforms.Compose([
+    transforms.Resize(size=(224, 224))
 ])
 
 
@@ -25,11 +28,15 @@ class Dataset(torch.utils.data.Dataset):
         img = self.data[index]
         label = self.label[index]
 
-        if self.transform is not None:
-            img = np.swapaxes(img, 0, 1)
-            img = np.swapaxes(img, 1, 2).astype('uint8')
-            img = Image.fromarray(img).convert('RGB')
+        img = np.swapaxes(img, 0, 1)
+        img = np.swapaxes(img, 1, 2).astype('uint8')
+        img = Image.fromarray(img).convert('RGB')
+
+        if self.transform != None:
             img = self.transform(img)
+        img = data_resize(img)
+        img = transforms.ToTensor()(img)
+
         return img, label
 
     def __len__(self):
