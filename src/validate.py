@@ -127,7 +127,7 @@ class Validator():
             else:
                 plt.imshow(picC)
 
-        if comment is not "":
+        if comment != "":
             plt.text(0, 1, comment, fontsize=14)
 
         plt.show()

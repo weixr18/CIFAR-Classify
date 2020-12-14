@@ -9,6 +9,7 @@ from torchvision import transforms
 data_transforms = transforms.Compose([
     # transforms.RandomVerticalFlip(),
     transforms.RandomHorizontalFlip(),
+    transforms.RandomCrop(size=32, padding=4, fill=0)
     # transforms.RandomRotation(90),
 ])
 

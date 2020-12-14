@@ -33,6 +33,7 @@ if __name__ == "__main__":
             "lr_gamma": 0.85,
 
             "optimizer": "Adam",
+            "name_prefix": "CR+HF+RS"
 
         }
 
@@ -107,14 +108,7 @@ if __name__ == "__main__":
         SHOW_PIC = False
 
         module_names = [
-            "resnet-20201209195322-epoch-20-validacc-0.41752373417721517",
-            "resnet-20201209200052-epoch-40-validacc-0.46143196202531644",
-            "resnet-20201209200825-epoch-60-validacc-0.4549050632911392",
-            "resnet-20201209201537-epoch-80-validacc-0.4452136075949367",
-            "resnet-20201209202328-epoch-100-validacc-0.4489715189873418",
-            "resnet-20201209203135-epoch-120-validacc-0.457871835443038",
-            "resnet-20201209203922-epoch-140-validacc-0.4584651898734177",
-            "resnet-20201209203922-epoch-140-validacc-0.4584651898734177",
+            "resnet-20201210020322-epoch-60-validacc-0.7019382911392406.pth",
         ]
 
         for name in module_names:

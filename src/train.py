@@ -80,6 +80,7 @@ class Trainer():
         batch_size = self.hyper_params["batch_size"]
         epoch_save = self.hyper_params["epoch_save"]
         width_out, height_out = self.hyper_params["input_size"]
+        prefix = self.hyper_params["name_prefix"]
 
         for _ in range(epochs):
 
@@ -115,9 +116,10 @@ class Trainer():
                 print("Total loss in epoch %d : %f , learning rate : %f,  validation accuracy : %f" %
                       (_ + 1, total_loss, self.StepLR.get_lr()[0], val_acc))
 
-            if (_+1) % epoch_save == 0:
-                self.save_module(name_else="-epoch-" +
-                                 str(_ + 1) + "-validacc-" + str(val_acc))
+            if (_ + 1) % epoch_save == 0:
+                name_else = prefix + "-epoch-" + \
+                    str(_ + 1) + "-validacc-" + str(val_acc)
+                self.save_module(name_else=name_else)
                 print("MODULE SAVED.")
 
             self.StepLR.step()
