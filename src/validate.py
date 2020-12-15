@@ -55,7 +55,7 @@ class Validator():
             else:
                 val_x_list = [val_x]
 
-            """get binary output"""
+            """get output"""
             # S val_x_list: [6 or 1, batch_size, width, height]
 
             y_list_cpu = []
@@ -71,11 +71,8 @@ class Validator():
                 """get raw output"""
                 predict_y = self.resnet(x)
 
-                """binarization"""
-                # S predict_y: [batch_size, class_num]
+                # S predict_y_cpu: [batch_size, class_num]
                 predict_y_cpu = predict_y.detach().cpu()
-
-                # S predict_y: [batch_size, class_num]
                 y_list_cpu.append(predict_y_cpu)
 
             """Augmentation vote"""

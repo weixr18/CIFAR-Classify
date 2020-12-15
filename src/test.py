@@ -10,11 +10,11 @@ class Tester():
 
     def __init__(self, module_path, hyper_params,
                  use_cuda, test_rate=1.0,
-                 USE_EXIST_RES=False,):
+                 USE_EXIST_RES=False, mission=1):
 
         print("Test rate:", test_rate)
         _, self.dataset = get_dataset(
-            valid_rate=test_rate, USE_TRANSFORM=False)
+            valid_rate=test_rate, USE_TRANSFORM=False, mission=mission)
         print("test number:", len(self.dataset))
 
         self.hyper_params = hyper_params
@@ -25,7 +25,7 @@ class Tester():
             shuffle=False
         )
 
-        self.resnet = get_network()
+        self.resnet = get_network(mission=mission)
         self.resnet.load_state_dict(torch.load(module_path))
         if use_cuda:
             self.resnet = self.resnet.cuda()
@@ -42,9 +42,9 @@ class Tester():
 
 class SetTester():
 
-    def __init__(self, module_path, hyper_params, use_cuda):
+    def __init__(self, module_path, hyper_params, use_cuda, mission=1):
 
-        self.dataset = get_test_set(mission=1)
+        self.dataset = get_test_set(mission=mission)
         print("test number:", len(self.dataset))
 
         self.hyper_params = hyper_params

@@ -2,7 +2,7 @@ import argparse
 
 from test import Tester, SetTester
 from train import Trainer
-from predict import Predictor
+#from predict import Predictor
 
 
 def get_args():
@@ -33,7 +33,7 @@ if __name__ == "__main__":
             "lr_gamma": 0.85,
 
             "optimizer": "Adam",
-            "name_prefix": "CR+HF+RS"
+            "name_prefix": "M2"
 
         }
 
@@ -47,7 +47,7 @@ if __name__ == "__main__":
                       hyper_params=hyper_parameters,
                       use_cuda=use_cuda,
                       PRETRAINED=False,
-                      mission=1)
+                      mission=2)
         print("Model ready.")
 
         trainer.train()
@@ -119,7 +119,7 @@ if __name__ == "__main__":
                 module_path=module_path,
                 hyper_params=hyper_parameters,
                 use_cuda=use_cuda,
-                mission=1
+                mission=2
             )
             print("Model ready.")
 
@@ -133,33 +133,6 @@ if __name__ == "__main__":
 
             print("module:", module_path.split('/')[-1])
             print("test accuracy:", test_acc, "time:", toc - tic)
-
-        pass
-
-    elif mode == "Predict":
-
-        hyper_parameters = {
-            "batch_size": 64,
-            "threads": 0,
-            "input_size": (224, 224),
-        }
-
-        module_names = [
-            "resnet-20201214151447CR+HF+RS-epoch-40-validacc-0.7620648734177216",
-        ]
-        save_dir = "res/"
-        use_cuda = True
-        TTA = False
-
-        for name in module_names:
-
-            module_path = "./save/" + name + ".pth"
-            predictor = Predictor(model_path=model_path,
-                                  save_dir=save_dir,
-                                  hyper_params=hyper_parameters,
-                                  use_cuda=use_cuda,
-                                  mission=1)
-            predictor.predict(TTA=TTA)
 
         pass
 
@@ -207,5 +180,31 @@ if __name__ == "__main__":
             print("module:", module_path.split('/')[-1])
             print("test accuracy:", test_acc)
        
+    elif mode == "Predict":
+
+        hyper_parameters = {
+            "batch_size": 1,
+            "threads": 0,
+            "TTA_KERNEL_SIZE": (6, 6),
+            "BG_KERNEL_SIZE": (8, 8),
+            "DILATE_ITERATIONS": 10,
+            "BIN_THRESHOLD": 0.6,
+        }
+        cell_dir = "D:/Machine_Learning/Codes/CellSegment/supplementary/dataset1/test/"
+        model_path = "D:/Machine_Learning/Codes/CellSegment/save/unet-20200524epoch-2000.pth"
+        save_dir = "D:/Machine_Learning/Codes/CellSegment/supplementary/dataset1/test_RES/"
+        use_cuda = True
+        TTA = False
+
+        predictor = Predictor(model_path=model_path,
+                              cell_dir=cell_dir,
+                              save_dir=save_dir,
+                              hyper_params=hyper_parameters,
+                              use_cuda=use_cuda
+                              )
+
+        predictor.predict(TTA=TTA)
+        pass
+    
     """
     pass

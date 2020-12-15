@@ -7,10 +7,8 @@ from torchvision import transforms
 
 
 data_transforms = transforms.Compose([
-    # transforms.RandomVerticalFlip(),
     transforms.RandomHorizontalFlip(),
     transforms.RandomCrop(size=32, padding=4, fill=0)
-    # transforms.RandomRotation(90),
 ])
 
 data_resize = transforms.Compose([
@@ -44,22 +42,23 @@ class Dataset(torch.utils.data.Dataset):
         return self.data.shape[0]
 
 
-def get_data_array():
+def get_data_array(mission=1):
 
     data = np.load("q1_data/train.npy")
     data = data.reshape([-1, 3, 32, 32])
-    data = data.astype(np.float32)
+    #data = data.astype(np.float32)
 
-    label_file = pd.read_csv("q1_data/train1.csv", header=None)
+    label_file = pd.read_csv(
+        "q1_data/train" + str(mission) + ".csv", header=None)
     label = label_file.values[1:, 1]
     label = label.astype(np.float32)
 
     return data, label
 
 
-def get_dataset(valid_rate, USE_TRANSFORM=True):
+def get_dataset(valid_rate, USE_TRANSFORM=True, mission=1):
     """get split train & validation datasets"""
-    data, label = get_data_array()
+    data, label = get_data_array(mission=mission)
 
     # separate the lists according to valid_rate
     sample_size = data.shape[0]

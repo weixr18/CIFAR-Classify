@@ -21,13 +21,13 @@ class Trainer():
         pass
 
     def setup(self, valid_rate=0.1, use_cuda=True, model_path="", use_exist_dataset=False,
-              module_save_dir="", tmp_dir="",
+              module_save_dir="", mission=1,
               criterion=None, hyper_params=None,
               FREEZE_PARAM=False, PRETRAINED=False
               ):
         """setup the module"""
         self.train_dataset, self.valid_dataset = get_dataset(
-            valid_rate, USE_TRANSFORM=True)
+            valid_rate, USE_TRANSFORM=True, mission=mission)
 
         self.hyper_params = hyper_params
         self.train_data_loader = DataLoader(
@@ -44,7 +44,7 @@ class Trainer():
         )
 
         self.use_cuda = use_cuda
-        self.resnet = get_network()
+        self.resnet = get_network(mission)
         if PRETRAINED:
             self.resnet.load_state_dict(torch.load(model_path))
         if use_cuda:
