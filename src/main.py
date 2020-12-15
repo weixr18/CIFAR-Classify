@@ -145,7 +145,7 @@ if __name__ == "__main__":
         }
 
         module_names = [
-            "resnet-20201214151447CR+HF+RS-epoch-40-validacc-0.7620648734177216",
+            "resnet-20201214235054CR+HF+RS-epoch-200-validacc-0.7822389240506329",
         ]
         save_dir = "res/"
         use_cuda = True
