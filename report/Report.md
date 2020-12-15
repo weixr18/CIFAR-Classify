@@ -6,27 +6,33 @@
 
 任务1训练：
 
-    python src/main.py -m "Train"
+    python src/main.py -m "Train" -t 1
 
 任务1预测：
 
-    python src/main.py -m "Predict"
+    python src/main.py -m "Predict" -t 1
 
 任务2训练：
 
-    python src/main2.py -m "Train"
+    python src/main.py -m "Train" -t 2
 
 任务2预测：
 
-    python src/main2.py -m "Predict"
-
+    python src/main.py -m "Predict" -t 2
 
 ### 文件组织
 
++ src/ 所有源代码
+  + main.py 主函数
+  + data.py 数据集获取
+  + train.py 训练网络
+  + validate.py 验证
+  + predict.py 预测测试机
+  + net.py 获取网络
 + report/ 报告
 + res/ 结果存储路径
 + save/ 权重存储路径
-+ src/ 所有源代码
+
 
 ## 方法介绍
 
@@ -97,7 +103,6 @@ ResNet-18网络的整体结构如下：
 ![7](7.png)
 
 最终的全连接层根据目标分类数不同而不同。任务1为20类，任务2为100类。
-
 
 ## 实验过程和结果
 
