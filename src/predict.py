@@ -1,15 +1,11 @@
-import imageio
-import os
-import zipfile
-
-import cv2
 import numpy as np
 import torch
+from tqdm import tqdm
 from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
 
 from net import get_network
-from data import get_dataset
+from data import get_test_set
 from validate import Validator
 
 
@@ -20,12 +16,10 @@ class Predictor():
 
     def __init__(self, model_path, save_dir, hyper_params, use_cuda, mission=1):
 
-        _, self.dataset = get_dataset(
-            valid_rate=1, USE_TRANSFORM=False, mission=mission)
-
+        self.dataset = get_test_set(mission=mission)
         self.hyper_params = hyper_params
         self.data_loader = DataLoader(
-            dataset=self.test_set,
+            dataset=self.dataset,
             num_workers=self.hyper_params["threads"],
             batch_size=self.hyper_params["batch_size"],
             shuffle=False
@@ -33,11 +27,12 @@ class Predictor():
         self.save_dir = save_dir
         self.model_path = model_path
         self.use_cuda = use_cuda
+        self.mission = mission
 
         self.resnet = get_network(mission=mission)
-        self.resnet.load_state_dict(torch.load(module_path))
+        self.resnet.load_state_dict(torch.load(model_path))
         if use_cuda:
-            self.unet = self.unet.cuda()
+            self.resnet = self.resnet.cuda()
         pass
 
     def predict(self, TTA=True):
@@ -45,8 +40,9 @@ class Predictor():
         batch_size = self.hyper_params["batch_size"]
         use_cuda = self.use_cuda
 
-        predicts = []
-        for i, data in enumerate(self.data_loader):
+        i = 0
+        predicts = np.ndarray([len(self.dataset)], dtype=np.int32)
+        for data in tqdm(self.data_loader, ascii=True, ncols=120):
 
             """preprocess"""
             # S val_x: [batch_size, 3, width, height]
@@ -68,16 +64,20 @@ class Predictor():
             predict_y = predict_y.detach().cpu()
             # S predict_y: [batch_size]
             predict_y = np.argmax(predict_y, axis=1)
-            predicts.append(predict_y)
+            predicts[i * batch_size:(i + 1) * batch_size] = predict_y.numpy()
+            i += 1
             pass
 
         """write into csv"""
 
-        self.write_csv(predicts)
+        self.write_csv(predicts, mission=self.mission)
         print("Files saved.")
         pass
 
-    def write_csv(self, predicts):
+    def write_csv(self, predicts, mission=1):
+        index = np.arange(0, predicts.shape[0], 1, dtype=np.uint8)
+        predicts = np.vstack([index, predicts]).T
+        np.savetxt('res/'+str(mission)+'.csv', predicts, delimiter=',')
         pass
 
     def show_pic(self, picA, picB, picC=None,

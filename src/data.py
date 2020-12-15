@@ -25,7 +25,10 @@ class Dataset(torch.utils.data.Dataset):
 
     def __getitem__(self, index):
         img = self.data[index]
-        label = self.label[index]
+        if self.label is not None:
+            label = self.label[index]
+        else:
+            label = None
 
         img = np.swapaxes(img, 0, 1)
         img = np.swapaxes(img, 1, 2).astype('uint8')
@@ -46,13 +49,11 @@ def get_data_array(mission=1):
 
     data = np.load("q1_data/train.npy")
     data = data.reshape([-1, 3, 32, 32])
-    #data = data.astype(np.float32)
 
     label_file = pd.read_csv(
         "q1_data/train" + str(mission) + ".csv", header=None)
     label = label_file.values[1:, 1]
     label = label.astype(np.float32)
-
     return data, label
 
 
@@ -66,7 +67,7 @@ def get_dataset(valid_rate, USE_TRANSFORM=True, mission=1):
     valid_index = np.random.choice(
         a=sample_size, size=valid_size, replace=False, p=None)
     train_index = set(range(sample_size)) - set(valid_index)
-    train_index = np.array(list(train_index))
+    train_index = np.array(list(train_index)).astype(np.int64)
 
     valid_data = data[valid_index, :]
     valid_label = label[valid_index]
@@ -89,7 +90,6 @@ def get_test_set(mission=1):
     data = np.load("q1_data/test.npy")
     data = data.reshape([-1, 3, 32, 32])
     data = data.astype(np.float32)
-    label = np.load("q1_data/test_res/test_label" + str(mission) + ".npy")
 
-    test_dataset = Dataset(data, label)
+    test_dataset = Dataset(data, label=None)
     return test_dataset

@@ -5,12 +5,6 @@ import matplotlib.pyplot as plt
 import torchvision.transforms as T
 
 
-def CUDA(func):
-    def wrapper(*args, **kwargs):
-        return func(*args, **kwargs)
-    return wrapper
-
-
 class Validator():
 
     def __init__(self, resnet,
@@ -35,60 +29,16 @@ class Validator():
             val_x, val_y = data
             val_y = val_y.type(torch.LongTensor)
 
-            """Test time augmentation"""
-            # S val_x: [batch_size, 3, width, height]
-            if TTA:
-                val_x_fh = torch.flip(val_x, dims=[2])
-                val_x_fv = torch.flip(val_x, dims=[3])
-                val_x_90 = torch.rot90(val_x, 1, dims=(2, 3))
-                val_x_180 = torch.rot90(val_x, 2, dims=(2, 3))
-                val_x_270 = torch.rot90(val_x, 3, dims=(2, 3))
-
-                val_x_list = [
-                    val_x,
-                    val_x_fh,
-                    val_x_fv,
-                    val_x_90,
-                    val_x_180,
-                    val_x_270,
-                ]
-            else:
-                val_x_list = [val_x]
-
             """get output"""
-            # S val_x_list: [6 or 1, batch_size, width, height]
-
-            y_list_cpu = []
-            for x in val_x_list:
-                # S x: [batch_size, 3, width, height]
-                if not isinstance(x, torch.Tensor):
-                    x = T.ToTensor()(x)
-
-                # S x: [batch_size, 3, width, height]
-                if use_cuda:
-                    x = x.cuda()
-
-                """get raw output"""
-                predict_y = self.resnet(x)
-
-                # S predict_y_cpu: [batch_size, class_num]
-                predict_y_cpu = predict_y.detach().cpu()
-                y_list_cpu.append(predict_y_cpu)
-
-            """Augmentation vote"""
-            # S y_list_cpu: [6 or 1, batch_size, class_num]
-
-            if TTA:
-                # S y_list_cpu[n]: [batch_size, class_num]
-                predict_y = torch.stack(tuple(y_list_cpu), dim=0)
-                predict_y = torch.mean(predict_y, dim=0)
-
-                # S predict_y: [batch_size, class_num]
-                predict_y[predict_y > 0.5] = 1
-                predict_y[predict_y <= 0.5] = 0
-
-            else:
-                predict_y = y_list_cpu[0]
+            # S x: [batch_size, 3, width, height]
+            x = val_x
+            if not isinstance(x, torch.Tensor):
+                x = T.ToTensor()(x)
+            if use_cuda:
+                x = x.cuda()
+            predict_y = self.resnet(x)
+            # S predict_y_cpu: [batch_size, class_num]
+            predict_y = predict_y.detach().cpu()
 
             """calc accuracy"""
             predict_y = np.argmax(predict_y, axis=1)
